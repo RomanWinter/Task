@@ -1,36 +1,57 @@
-from sys import stdin # функция ввода данных
 
+from sys import stdin, exit as sys_exit
 
-def parse(robot, line): # новая функция
-    command = line.split() # разделение строки по пробелам
-    length = len(command) # вычисление количества аргументов
+class Robot(object):
+    def __init__(self):
+        """
+        This is a class constructor.
+        """
+        self.robot = {'x': 0, 'y': 0}
 
-    if length == 1: # если команда состоит из одного слова
-         if command[0] == 'distance': # если это команда - distance
-             print(round((robot['x'] ** 2 + robot['y'] ** 2) ** 0.5)) # расчет расстояния
-
-    elif length == 2: # если команда состоит из двух слов
-        direction, amount = command[0], int(command[1]) # то разделяю её на направление и количество метров
-                                                        # если вместо числа вторым доводом приходит просто строка, то выкидывается исключение ValueError
-                                                        # исключение обрабатывается в главном цикле
-
-        if direction == 'right': # если робот идет вправо
-            robot['x'] += amount # добавляю то число к его координате x
-        elif direction == 'left': # аналогично
-            robot['x'] -= amount
+    def move_robot(self, direction, amount):
+        """
+        Calculates where to move the robot depending on directions given.
+        Updates global self.robot dictionary.
+        """
+        if direction == 'right':
+            self.robot['x'] += amount
+        elif direction == 'left':
+            self.robot['x'] -= amount
         elif direction == 'forward':
-            robot['y'] += amount
+            self.robot['y'] += amount
         elif direction == 'backward':
-            robot['y'] -= amount
+            self.robot['y'] -= amount
 
-if __name__ == '__main__': # если запуск из консоли, а не подключается с помощью import
-                           # то следующие действия
-    robot = {'x': 0, 'y': 0} # новый робот
+    def parse_command(self, line):
+        """
+        Process the command.
+        """
+        command = line.split()
+        length = len(command)
 
-    for line in stdin: # читаю по одной строке из потока ввода
-        try: # попытка выполнить какие-то действия
-            parse(robot, line) # распарсить команду
-        except ValueError: # если во время выполнения действий выкинулось исключение
+        if length == 1:
+            if command[0] == 'distance':
+                print(round((self.robot['x'] ** 2 + self.robot['y'] ** 2) ** 0.5))
+            elif command[0] == 'exit':
+                sys_exit()
 
-            pass # бездействие
+        elif length == 2:
+            direction, amount = command[0], int(command[1])
+            self.move_robot(direction, amount)
 
+    def main(self):
+        """
+        This is a main method of the class. Entry point.
+        """
+        for line in stdin:
+            self.parse_command(line)
+
+
+if __name__ == '__main__':
+
+    TEST_ROBOT = Robot()
+
+    try:
+        TEST_ROBOT.main()
+    except (ValueError, KeyboardInterrupt):
+        pass
