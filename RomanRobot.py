@@ -1,5 +1,5 @@
-from sys import stdin, exit as sys_exit
 
+from sys import stdin, exit as sys_exit
 
 class Robot(object):
     def __init__(self):
